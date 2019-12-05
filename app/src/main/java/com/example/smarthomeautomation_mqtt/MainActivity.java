@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -32,6 +33,17 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import lecho.lib.hellocharts.formatter.LineChartValueFormatter;
+import lecho.lib.hellocharts.formatter.SimpleLineChartValueFormatter;
+import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
+import lecho.lib.hellocharts.model.ValueShape;
+import lecho.lib.hellocharts.view.LineChartView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
         faniv=findViewById(R.id.ifan);
         bulbiv=findViewById(R.id.ibulb);
         linearLayout=findViewById(R.id.linearLayout);
+
+
+        ViewHandler.temperatureChartInit((SlimChart) findViewById(R.id.temp));
+        ViewHandler.humidityChartInit((SlimChart) findViewById(R.id.humidity));
+        ViewHandler.lineChartInit((LineChartView) findViewById(R.id.chart));
+
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             makeNotificationChannel("CHANNEL", "Priority", NotificationManager.IMPORTANCE_DEFAULT);
@@ -201,7 +220,6 @@ public class MainActivity extends AppCompatActivity {
                                     doConnect();
                                 }
                             })
-                            .setActionTextColor(getResources().getColor(R.color.colorylo))
                             .show();
                 }
             });
@@ -255,13 +273,11 @@ public class MainActivity extends AppCompatActivity {
     private void renderFan(String response){
         if (response.equals("1")) {
             fantv.setText("Fan Is On!");
-            fantv.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorskyblue));
             fansw.setChecked(true);
             faniv.setVisibility(View.GONE);
             (findViewById(R.id.gif)).setVisibility(View.VISIBLE);
         } else {
             fantv.setText("Fan Is Off!");
-            fantv.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorred));
             fansw.setChecked(false);
             (findViewById(R.id.gif)).setVisibility(View.GONE);
             faniv.setVisibility(View.VISIBLE);
@@ -271,13 +287,11 @@ public class MainActivity extends AppCompatActivity {
     private void renderBulb(String response){
         if (response.equals("1")) {
             bulbtv.setText("Bulb Is On!");
-            bulbtv.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorskyblue));
             bulbsw.setChecked(true);
             bulbiv.setImageResource(R.drawable.bon);
 
         } else {
             bulbtv.setText("Bulb Is Off!");
-            bulbtv.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorred));
             bulbsw.setChecked(false);
             bulbiv.setImageResource(R.drawable.boff);
         }
@@ -320,7 +334,6 @@ public class MainActivity extends AppCompatActivity {
             notification.setSmallIcon(R.drawable.critacal);
             notification.setContentTitle("Alert!");
             notification.setContentText("Smoke Detected In House!");
-            //notification.setSound(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.tone));
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             if (response.equals("1")) {
                 notificationManager.notify(0, notification.build());
@@ -335,7 +348,9 @@ public class MainActivity extends AppCompatActivity {
     void makeNotificationChannel(String id, String name, int importance)
     {
         NotificationChannel channel = new NotificationChannel(id, name, importance);
-        channel.setSound(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.tone), new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).setLegacyStreamType(AudioManager.STREAM_NOTIFICATION).setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT).build());
+        //channel.setSound(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.tone), new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).setLegacyStreamType(AudioManager.STREAM_NOTIFICATION).setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT).build());
+        channel.setBypassDnd(true);
+        channel.enableLights(true);
         NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         notificationManager.createNotificationChannel(channel);
     }
