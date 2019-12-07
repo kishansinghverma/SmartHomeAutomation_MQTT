@@ -1,6 +1,7 @@
 package com.example.smarthomeautomation_mqtt;
 
 import android.graphics.Color;
+import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,55 @@ public class ViewHandler {
         data.setLines(lines);
 
         chartView.setLineChartData(data);
+
+    }
+
+    public static void renderDHT(String response, SlimChart tChart, SlimChart hChart) {
+        String[] status = response.trim().split("/");
+        float tmp = Float.parseFloat(status[0]);
+        float humid = Float.parseFloat(status[1]);
+        //temptv.setText(tmp + "\u00B0C~" + humid + "%\nLast Updated\n" + status[2]);
+    }
+
+    public static void renderFan(String response, Switch fansw){
+        /*if (response.equals("1")) {
+            fantv.setText("Fan Is On!");
+            fansw.setChecked(true);
+            faniv.setVisibility(View.GONE);
+            (findViewById(R.id.gif)).setVisibility(View.VISIBLE);
+        } else {
+            fantv.setText("Fan Is Off!");
+            fansw.setChecked(false);
+            (findViewById(R.id.gif)).setVisibility(View.GONE);
+            faniv.setVisibility(View.VISIBLE);
+        }*/
+    }
+
+    public static void renderBulb(String response, Switch bulbsw){
+        /*if (response.equals("1")) {
+            bulbtv.setText("Bulb Is On!");
+            bulbsw.setChecked(true);
+            bulbiv.setImageResource(R.drawable.bon);
+
+        } else {
+            bulbtv.setText("Bulb Is Off!");
+            bulbsw.setChecked(false);
+            bulbiv.setImageResource(R.drawable.boff);
+        }*/
+
+    }
+
+    public static void renderMotor(String response, Switch motorsw){
+        /*if (response.equals("1")) {
+            bulbtv.setText("Bulb Is On!");
+            bulbsw.setChecked(true);
+            bulbiv.setImageResource(R.drawable.bon);
+
+        } else {
+            bulbtv.setText("Bulb Is Off!");
+            bulbsw.setChecked(false);
+            bulbiv.setImageResource(R.drawable.boff);
+        }*/
 
     }
 }

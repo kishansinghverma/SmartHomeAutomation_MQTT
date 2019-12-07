@@ -1,23 +1,15 @@
 package com.example.smarthomeautomation_mqtt;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.NotificationManagerCompat;
 
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.graphics.Color;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,157 +26,140 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import lecho.lib.hellocharts.formatter.LineChartValueFormatter;
-import lecho.lib.hellocharts.formatter.SimpleLineChartValueFormatter;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.ValueShape;
 import lecho.lib.hellocharts.view.LineChartView;
+
+import static com.example.smarthomeautomation_mqtt.ViewHandler.*;
 
 public class MainActivity extends AppCompatActivity {
 
     Switch fansw;
     Switch bulbsw;
-    TextView temptv;
-    TextView fantv;
-    TextView bulbtv;
+    Switch motorsw;
 
-    ImageView faniv;
-    ImageView bulbiv;
+    LineChartView lineChartView;
+    SlimChart hChart;
+    SlimChart tChart;
 
-    LinearLayout linearLayout;
+    ConstraintLayout layout;
+    CardView fanCard;
+    CardView bulbCard;
+    CardView motorCard;
+
+    NotificationHandler notificationHandler;
+    NotificationManagerCompat notificationManager;
 
     MqttAndroidClient client;
-    NotificationCompat.Builder notification;
-    Snackbar disconneted;
 
-    Boolean manual=true;
+    Snackbar disconnected;
+    Snackbar retry;
+
+    Map<Integer, String> names;
+    Map<View, View> views;
+
+    int GAS=100;
+    int WATER=200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fansw=findViewById(R.id.btnfan);
-        bulbsw=findViewById(R.id.btnbulb);
-        temptv =findViewById(R.id.tvtemp);
-        fantv=findViewById(R.id.tvfan);
-        bulbtv=findViewById(R.id.tvbulb);
-        faniv=findViewById(R.id.ifan);
-        bulbiv=findViewById(R.id.ibulb);
-        linearLayout=findViewById(R.id.linearLayout);
-
-
-        ViewHandler.temperatureChartInit((SlimChart) findViewById(R.id.temp));
-        ViewHandler.humidityChartInit((SlimChart) findViewById(R.id.humidity));
-        ViewHandler.lineChartInit((LineChartView) findViewById(R.id.chart));
-
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            makeNotificationChannel("CHANNEL", "Priority", NotificationManager.IMPORTANCE_DEFAULT);
-        }
-        notification = new NotificationCompat.Builder(MainActivity.this, "CHANNEL");
-
-        disconneted=Snackbar.make(linearLayout, "Disconnected!! Trying To Reconnect...", Snackbar.LENGTH_INDEFINITE);
-
+        initComponents();
         doConnect();
+    }
 
-        faniv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(fansw.isChecked())
-                    fansw.setChecked(false);
-                else
-                    fansw.setChecked(true);
-                fanSwitch(v);
-            }
-        });
+    public void publishToTopic(String topic, String msg){
 
-        fansw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(manual) {
-                    Toast.makeText(MainActivity.this, "Fan Switched", Toast.LENGTH_SHORT).show();
-                    fanSwitch(linearLayout);
-                }
-                manual=true;
-            }
-        });
-
-        bulbsw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(manual) {
-                    Toast.makeText(MainActivity.this, "Bulb Switched", Toast.LENGTH_SHORT).show();
-                    bulbSwitch(linearLayout);
-                }
-                manual=true;
-            }
-        });
-
-        bulbiv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(bulbsw.isChecked())
-                    bulbsw.setChecked(false);
-                else
-                    bulbsw.setChecked(true);
-                bulbSwitch(v);
-            }
-        });
-
-        findViewById(R.id.gif).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(fansw.isChecked())
-                    fansw.setChecked(false);
-                else
-                    fansw.setChecked(true);
-                fanSwitch(v);
-            }
-        });
+        try {
+            MqttMessage message = new MqttMessage();
+            message.setRetained(true);
+            message.setPayload(msg.getBytes());
+            client.publish(topic, message);
+            Log.d("Info", "Published SuccessFully");
+        }
+        catch (MqttException e) {
+            toast("Can't Connect To Host!!");
+        }
 
     }
 
+    public void switchHandler(View v){
+        if(((Switch)v).isChecked())
+            ((Switch)v).setChecked(false);
+        else
+            ((Switch)v).setChecked(true);
+
+        payloadCreator(v);
+    }
+
+    public void payloadCreator(View v) {
+        v=views.get(v);
+        toast("Trying to switch...");
+        String msg;
+        String topic="post/"+ names.get(v.getId());
+
+        if(((Switch)v).isChecked())
+            msg="0";
+        else
+            msg="1";
+        publishToTopic(topic, msg);
+    }
+
+    private void doNotify(String topic, String response){
+        if(topic.equals("get/water")) {
+
+            if (response.equals("1"))
+                notificationManager.notify(WATER, notificationHandler.createWaterNotification(this).build());
+            else
+                notificationManager.cancel(WATER);
+        }
+        else if(topic.equals("get/gas")){
+
+            if (response.equals("1"))
+                notificationManager.notify(GAS, notificationHandler.createGasNotification(this).build());
+            else
+                notificationManager.cancel(GAS);
+        }
+    }
+
     public void doConnect() {
-        String clientId = MqttClient.generateClientId();
-        client = new MqttAndroidClient(getApplicationContext(), "tcp://klinux.tk:90", clientId);
+        final String clientId = MqttClient.generateClientId();
+        client = new MqttAndroidClient(getApplicationContext(), "tcp://klinux.tk", clientId);
         client.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
-                disconneted.dismiss();
+
                 if (reconnect) {
-                    Log.d("Info", "Client Reconnected");
-                    Toast.makeText(MainActivity.this, "Reconnected!!", Toast.LENGTH_SHORT).show();
                     subscribeToTopic();
+                    toast("Reconnected To Server!");
+                    Log.d("Info","Connection Reconnected");
                 } else {
-                    Log.d("Info", "Client Connected");
                 }
             }
 
             @Override
             public void connectionLost(Throwable cause) {
-                disconneted.show();
-                Log.d("Error", "Connection Lost");
+                Log.d("Info", "Connection Disconnected");
+                activateControls(false);
+                retry.show();
             }
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                if(topic.equals("get/fan")){
-                    manual=false;
-                    renderFan(message.toString());
-                }
-                if(topic.equals("get/bulb")){
-                    manual=false;
-                    renderBulb(message.toString());
-                }
+                if(topic.equals("get/fan"))
+                    renderFan(message.toString(), fansw);
+
+                if(topic.equals("get/bulb"))
+                    renderBulb(message.toString(), bulbsw);
+
+                if(topic.equals("get/motor"))
+                    renderMotor(message.toString(), motorsw);
+
                 if(topic.equals("get/dht")){
-                    renderDHT(message.toString());
+                    renderDHT(message.toString(), tChart, hChart);
                 }
                 if(topic.equals("get/gas") || topic.equals("get/water"))
                     doNotify(topic, message.toString());
@@ -198,29 +173,29 @@ public class MainActivity extends AppCompatActivity {
 
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setAutomaticReconnect(true);
-        mqttConnectOptions.setUserName("kishan");
-        mqttConnectOptions.setPassword("root".toCharArray());
+        mqttConnectOptions.setCleanSession(false);
 
         try {
             client.connect(mqttConnectOptions, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d("Info", "Client to server Connected");
+                    Log.d("Info", "Connection Succeed!");
+                    toast("Connected To Server!");
                     subscribeToTopic();
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d("Error", "Connection to server Failed");
+                    Log.d("Info", "Connection Failure!");
+                    activateControls(false);
 
-                    Snackbar.make(linearLayout, "Connection To Server Failed!", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    doConnect();
-                                }
-                            })
-                            .show();
+                    disconnected=Snackbar.make(layout, "Can't Connect To Server", Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            doConnect();
+                        }
+                    });
+                    disconnected.show();
                 }
             });
         }
@@ -230,6 +205,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void subscribeToTopic(){
+        retry.dismiss();
+        disconnected.dismiss();
+
+        activateControls(true);
+
         try {
             client.subscribe("get/#", 0, null, new IMqttActionListener() {
                 @Override
@@ -248,110 +228,62 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public  void publishToTopic(String topic, String msg){
-        try {
-            MqttMessage message = new MqttMessage();
-            message.setRetained(true);
-            message.setPayload(msg.getBytes());
-            client.publish(topic, message);
-            Log.d("Info", "Published SuccessFully");
-        }
-        catch (MqttException e) {
-            Toast.makeText(this, "Can't Connect To Host!!", Toast.LENGTH_SHORT).show();
-            System.err.println("Error in Publishing");
-        }
+    public void initComponents(){
 
+        fanCard=findViewById(R.id.fancard);
+        bulbCard=findViewById(R.id.bulbcard);
+        motorCard=findViewById(R.id.motorcard);
+        fansw=findViewById(R.id.fansw);
+        bulbsw=findViewById(R.id.bulbsw);
+        motorsw=findViewById(R.id.motorsw);
+
+        layout=findViewById(R.id.layout);
+        lineChartView=findViewById(R.id.chart);
+        hChart=findViewById(R.id.humidity);
+        tChart=findViewById(R.id.temp);
+
+
+        temperatureChartInit(tChart);
+        humidityChartInit(hChart);
+        lineChartInit(lineChartView);
+
+        names =new HashMap<>();
+        names.put(R.id.fansw, "fan");
+        names.put(R.id.bulbsw, "bulb");
+        names.put(R.id.motorsw, "motor");
+
+        views=new HashMap<>();
+        views.put(fanCard, fansw);
+        views.put(bulbCard, bulbsw);
+        views.put(motorCard, motorsw);
+        views.put(fansw, fansw);
+        views.put(bulbsw, bulbsw);
+        views.put(motorsw, motorsw);
+
+
+        notificationHandler=new NotificationHandler(getSystemService(NotificationManager.class));
+        notificationManager = NotificationManagerCompat.from(this);
+        retry=Snackbar.make(layout, "Disconnected! Trying To Reconnect...", Snackbar.LENGTH_INDEFINITE);
+        disconnected=Snackbar.make(layout, "Can't Connect To Server", Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doConnect();
+            }
+        });
     }
 
-    private void renderDHT(String response) {
-        String[] status = response.trim().split("/");
-        float tmp = Float.parseFloat(status[0]);
-        float humid = Float.parseFloat(status[1]);
-        temptv.setText(tmp + "\u00B0C~" + humid + "%\nLast Updated\n" + status[2]);
+    public void activateControls(boolean flag){
+        fanCard.setEnabled(flag);
+        bulbCard.setEnabled(flag);
+        motorCard.setEnabled(flag);
+        fansw.setEnabled(flag);
+        bulbsw.setEnabled(flag);
+        motorsw.setEnabled(flag);
     }
 
-    private void renderFan(String response){
-        if (response.equals("1")) {
-            fantv.setText("Fan Is On!");
-            fansw.setChecked(true);
-            faniv.setVisibility(View.GONE);
-            (findViewById(R.id.gif)).setVisibility(View.VISIBLE);
-        } else {
-            fantv.setText("Fan Is Off!");
-            fansw.setChecked(false);
-            (findViewById(R.id.gif)).setVisibility(View.GONE);
-            faniv.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void renderBulb(String response){
-        if (response.equals("1")) {
-            bulbtv.setText("Bulb Is On!");
-            bulbsw.setChecked(true);
-            bulbiv.setImageResource(R.drawable.bon);
-
-        } else {
-            bulbtv.setText("Bulb Is Off!");
-            bulbsw.setChecked(false);
-            bulbiv.setImageResource(R.drawable.boff);
-        }
-
-    }
-
-    public void fanSwitch(View v) {
-
-        String msg;
-        if(fansw.isChecked())
-            msg="1";
-        else
-            msg="0";
-        publishToTopic("post/fan", msg);
-    }
-
-    public void bulbSwitch(View v) {
-        String msg;
-        if(bulbsw.isChecked())
-            msg="1";
-        else
-            msg="0";
-        publishToTopic("post/bulb", msg);
-    }
-
-    private void doNotify(String topic, String response){
-        if(topic.equals("get/water")) {
-
-            notification.setSmallIcon(R.drawable.alert);
-            notification.setSound(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.tone));
-            notification.setContentTitle("Alert!");
-            notification.setContentText("Water Tank Is Filled!");
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            if (response.equals("1")) {
-                notificationManager.notify(1, notification.build());
-            } else
-                notificationManager.cancel(1);
-        }
-        else if(topic.equals("get/gas")){
-            notification.setSmallIcon(R.drawable.critacal);
-            notification.setContentTitle("Alert!");
-            notification.setContentText("Smoke Detected In House!");
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            if (response.equals("1")) {
-                notificationManager.notify(0, notification.build());
-            } else
-                notificationManager.cancel(0);
-
-        }
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    void makeNotificationChannel(String id, String name, int importance)
-    {
-        NotificationChannel channel = new NotificationChannel(id, name, importance);
-        //channel.setSound(Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.tone), new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).setLegacyStreamType(AudioManager.STREAM_NOTIFICATION).setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT).build());
-        channel.setBypassDnd(true);
-        channel.enableLights(true);
-        NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.createNotificationChannel(channel);
+    public void toast(String message){
+        Toast toast=Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,25);
+        toast.show();
     }
 }

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -64,6 +65,7 @@
                     app:text="16%"
                     app:textColor="@color/colorAccent" />
             </TableRow>
+
             <TableRow
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,15 +75,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textSize="12dp"
-                    android:text="Temperature" />
+                    android:text="Temperature"
+                    android:textSize="12dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textSize="12dp"
-                    android:text="Humidity" />
+                    android:text="Humidity"
+                    android:textSize="12dp" />
 
             </TableRow>
         </TableLayout>
@@ -105,17 +107,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@drawable/gradient">
+            android:background="@drawable/gradient"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#000000"
-                android:layout_marginRight="20dp"
                 android:layout_marginTop="2dp"
+                android:layout_marginRight="20dp"
                 android:gravity="right"
-                android:text="Last 24 Hours..." />
+                android:text="Last 24 Hours..."
+                android:textColor="#000000" />
 
             <lecho.lib.hellocharts.view.LineChartView
                 android:id="@+id/chart"
@@ -129,16 +131,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#ffffff"
                     android:layout_marginLeft="20dp"
-                    android:text="&#x1F321; Temperature" />
+                    android:text="&#x1F321; Temperature"
+                    android:textColor="#ffffff" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000000"
                     android:layout_marginLeft="20dp"
-                    android:text="&#127780; Humidity" />
+                    android:text="&#127780; Humidity"
+                    android:textColor="#000000" />
             </TableRow>
 
         </LinearLayout>
@@ -155,13 +157,17 @@
         app:layout_constraintTop_toBottomOf="@+id/chartCard">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/bulbcard"
             android:layout_width="100dp"
             android:layout_height="130dp"
-            app:cardCornerRadius="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="4dp"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:onClick="payloadCreator"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardCornerRadius="5dp"
             app:cardElevation="3dp">
 
             <LinearLayout
@@ -173,13 +179,14 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     app:srcCompat="@drawable/light_neon" />
+
                 <TextView
                     android:layout_width="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:gravity="center_horizontal"
-                    android:layout_height="wrap_content"
-                    android:textSize="12dp"
-                    android:text="Light Bulb"/>
+                    android:text="Light Bulb"
+                    android:textSize="12dp" />
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -187,8 +194,11 @@
                     android:gravity="center_horizontal">
 
                     <Switch
+                        android:id="@+id/bulbsw"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:onClick="switchHandler" />
 
                 </TableRow>
 
@@ -197,13 +207,17 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/fancard"
             android:layout_width="100dp"
             android:layout_height="130dp"
-            app:cardCornerRadius="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:layout_marginLeft="4dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="4dp"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:onClick="payloadCreator"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardCornerRadius="5dp"
             app:cardElevation="3dp">
 
             <LinearLayout
@@ -215,13 +229,14 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     app:srcCompat="@drawable/fan_neon" />
+
                 <TextView
                     android:layout_width="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:gravity="center_horizontal"
-                    android:layout_height="wrap_content"
-                    android:textSize="12dp"
-                    android:text="Ceiling Fan"/>
+                    android:text="Ceiling Fan"
+                    android:textSize="12dp" />
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -229,8 +244,11 @@
                     android:gravity="center_horizontal">
 
                     <Switch
+                        android:id="@+id/fansw"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:onClick="switchHandler" />
 
                 </TableRow>
 
@@ -240,13 +258,17 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/motorcard"
             android:layout_width="100dp"
             android:layout_height="130dp"
-            app:cardCornerRadius="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:layout_marginLeft="4dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:onClick="payloadCreator"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardCornerRadius="5dp"
             app:cardElevation="3dp">
 
             <LinearLayout
@@ -258,13 +280,14 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     app:srcCompat="@drawable/pump_neon" />
+
                 <TextView
                     android:layout_width="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:gravity="center_horizontal"
-                    android:layout_height="wrap_content"
-                    android:textSize="12dp"
-                    android:text="Water Pump"/>
+                    android:text="Water Pump"
+                    android:textSize="12dp" />
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -272,8 +295,11 @@
                     android:gravity="center_horizontal">
 
                     <Switch
+                        android:id="@+id/motorsw"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:onClick="switchHandler" />
 
                 </TableRow>
 
@@ -282,159 +308,5 @@
 
         </androidx.cardview.widget.CardView>
     </TableRow>
-
-
-
-
-
-
-
-
-
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:splitMotionEvents="false"
-        android:visibility="gone"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="102dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="22dp"
-            android:layout_marginBottom="22dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/itemp"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center_horizontal"
-                app:srcCompat="@drawable/thermometer512" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="5dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvtemp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:text="Fetching Data!\nPlease Wait..."
-                    android:textColor="@android:color/background_dark"
-                    android:textSize="22sp" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="22dp"
-            android:layout_marginBottom="22dp"
-            android:orientation="horizontal">
-
-            <pl.droidsonroids.gif.GifImageView
-                android:id="@+id/gif"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:layout_marginLeft="-5dp"
-                android:src="@drawable/fan"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/ifan"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="-5dp"
-                app:srcCompat="@drawable/fanstatic" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="25dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvfan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Updating..."
-                    android:textColor="@android:color/holo_orange_dark"
-                    android:textSize="24sp" />
-
-                <Switch
-                    android:id="@+id/btnfan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="25dp"
-                    android:showText="false"
-                    android:switchMinWidth="50dp"
-                    android:textOff="Off"
-                    android:textOn="On"
-                    android:textSize="24sp" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="22dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/ibulb"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center_horizontal"
-                app:srcCompat="@drawable/boff" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="35dp"
-                android:layout_marginTop="25dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvbulb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Updating..."
-                    android:textColor="@android:color/holo_orange_dark"
-                    android:textSize="24sp" />
-
-                <Switch
-                    android:id="@+id/btnbulb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="25dp"
-                    android:showText="false"
-                    android:switchMinWidth="50dp"
-                    android:textOff="Off"
-                    android:textOn="On"
-                    android:textSize="24sp" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
