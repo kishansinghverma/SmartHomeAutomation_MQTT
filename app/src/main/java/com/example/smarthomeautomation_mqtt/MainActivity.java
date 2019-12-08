@@ -5,11 +5,20 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationManagerCompat;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,8 +76,44 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        startActivity(new Intent(MainActivity.this, VideoActivity.class));
+
         initComponents();
         doConnect();
+    }
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId()==R.id.menu_video)
+                    startActivity(new Intent(MainActivity.this, VideoActivity.class));
+                else if(item.getItemId()==R.id.menu_setting)
+                    startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                else
+                    showDialog();
+
+                return false;
+            }
+        });
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.popup, popup.getMenu());
+        popup.show();
+    }
+
+    public void showDialog(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Created For Mini Project @ GLA\n\n" +
+                "Team Members:\n\u2022 Kishan Singh\n\u2022 Pragati Prabha\n\u2022 Renu Tiwari\n\u2022 Nishi Yadav\n\n" +
+                "Source Code: \nhttps://github.com/kishansinghverma/SmartHomeAutomation_MQTT");
+        alertDialogBuilder.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+            }
+        });
+        AlertDialog dialog=alertDialogBuilder.create();
+        dialog.show();
     }
 
     public void publishToTopic(String topic, String msg){
@@ -149,20 +194,22 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
+
                 if(topic.equals("get/fan"))
-                    renderFan(message.toString(), fansw);
+                    renderSwitch(message.toString(), fansw);
 
-                if(topic.equals("get/bulb"))
-                    renderBulb(message.toString(), bulbsw);
+                else if(topic.equals("get/bulb"))
+                    renderSwitch(message.toString(), bulbsw);
 
-                if(topic.equals("get/motor"))
-                    renderMotor(message.toString(), motorsw);
+                else if(topic.equals("get/motor"))
+                    renderSwitch(message.toString(), motorsw);
 
-                if(topic.equals("get/dht")){
+                else if(topic.equals("get/dht"))
                     renderDHT(message.toString(), tChart, hChart);
-                }
-                if(topic.equals("get/gas") || topic.equals("get/water"))
+
+                else if(topic.equals("get/gas") || topic.equals("get/water"))
                     doNotify(topic, message.toString());
+
             }
 
             @Override
