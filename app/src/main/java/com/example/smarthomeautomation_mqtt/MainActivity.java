@@ -71,12 +71,13 @@ public class MainActivity extends AppCompatActivity {
     int GAS=100;
     int WATER=200;
 
+    String port;
+    String ip;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        startActivity(new Intent(MainActivity.this, VideoActivity.class));
 
         initComponents();
         doConnect();
@@ -172,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void doConnect() {
         final String clientId = MqttClient.generateClientId();
-        client = new MqttAndroidClient(getApplicationContext(), "tcp://klinux.tk", clientId);
+        client = new MqttAndroidClient(getApplicationContext(), "tcp://"+ip+":"+port, clientId);
         client.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
@@ -220,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setAutomaticReconnect(true);
-        mqttConnectOptions.setCleanSession(false);
+        mqttConnectOptions.setCleanSession(true);
 
         try {
             client.connect(mqttConnectOptions, null, new IMqttActionListener() {
@@ -276,6 +277,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initComponents(){
+
+        if(SettingActivity.MODE.equals("local")){
+            port=SettingActivity.LOCAL_PORT;
+            ip=SettingActivity.LOCAL_IP;
+        }
+        else {
+            port=SettingActivity.GLOBAL_PORT;
+            ip=SettingActivity.GLOBAL_IP;
+        }
 
         fanCard=findViewById(R.id.fancard);
         bulbCard=findViewById(R.id.bulbcard);

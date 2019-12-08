@@ -58,6 +58,7 @@
 
         <TextView
             android:id="@+id/local"
+            android:onClick="setUrl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="35dp"
@@ -67,6 +68,7 @@
 
         <TextView
             android:id="@+id/global"
+            android:onClick="setUrl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Public IP \uf111"
