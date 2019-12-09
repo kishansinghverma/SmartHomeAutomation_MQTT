@@ -20,7 +20,7 @@ public class SettingActivity extends AppCompatActivity {
     TextView local, global, current_ip, current_port;
     EditText ip, port;
 
-    static String MODE="local";
+    static String MODE="global";
     static String LOCAL_IP="192.168.43.1";
     static String LOCAL_PORT="1883";
     static String GLOBAL_IP="klinux.tk";
@@ -83,6 +83,7 @@ public class SettingActivity extends AppCompatActivity {
         local.setText("Local IP \uf058");
         global.setText("Public IP \uf111");
     }
+    
     public void globalMode(){
         MODE="global";
         ip.setHint("Public IP Address");

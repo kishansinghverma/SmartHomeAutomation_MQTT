@@ -30,13 +30,13 @@ public class VideoActivity extends AppCompatActivity {
 
     public void setUrl(View v){
         if(v==local){
-            url="http://192.168.43.1:8080/browserfs.html";
+            url="http://"+SettingActivity.LOCAL_IP+":8080/browserfs.html";
             local.setText("Local IP \uf058");
             global.setText("Public IP \uf111");
             webView.loadUrl(url);
         }
         else {
-            url="http://klinux.tk/browserfs.html";
+            url="http://"+SettingActivity.GLOBAL_IP+"/browserfs.html";
             local.setText("Local IP \uf111");
             global.setText("Public IP \uf058");
             webView.loadUrl(url);

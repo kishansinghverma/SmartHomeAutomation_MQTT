@@ -1,5 +1,6 @@
 package com.example.smarthomeautomation_mqtt;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -21,6 +22,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -33,6 +39,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import lecho.lib.hellocharts.view.LineChartView;
@@ -44,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     Switch fansw;
     Switch bulbsw;
     Switch motorsw;
+
+    TextView info;
 
     LineChartView lineChartView;
     SlimChart hChart;
@@ -252,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
     public void subscribeToTopic(){
         retry.dismiss();
         disconnected.dismiss();
+        listenDHTData();
 
         activateControls(true);
 
@@ -271,6 +281,24 @@ public class MainActivity extends AppCompatActivity {
         } catch (MqttException ex){
             Log.d("Exception", "MqttException");
         }
+    }
+
+    public void listenDHTData(){
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dht = database.getReference("dht");
+
+        dht.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                setLineChartData(lineChartView, dataSnapshot, info);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void initComponents(){
@@ -295,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
         lineChartView=findViewById(R.id.chart);
         hChart=findViewById(R.id.humidity);
         tChart=findViewById(R.id.temp);
+        info=findViewById(R.id.chart_Info);
 
         retry=Snackbar.make(layout, "Disconnected! Trying To Connect...", Snackbar.LENGTH_INDEFINITE);
         disconnected=Snackbar.make(layout, "Can't Connect To Server", Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
@@ -308,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
 
         temperatureChartInit(tChart);
         humidityChartInit(hChart);
-        lineChartInit(lineChartView);
+        lineChartInit(lineChartView, info);
 
         names =new HashMap<>();
         names.put(R.id.fansw, "fan");
