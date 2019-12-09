@@ -83,7 +83,7 @@ public class SettingActivity extends AppCompatActivity {
         local.setText("Local IP \uf058");
         global.setText("Public IP \uf111");
     }
-    
+
     public void globalMode(){
         MODE="global";
         ip.setHint("Public IP Address");
