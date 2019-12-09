@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 public class SettingActivity extends AppCompatActivity {
 
     FloatingActionButton save;
@@ -35,9 +37,13 @@ public class SettingActivity extends AppCompatActivity {
         port=findViewById(R.id.port);
         current_ip=findViewById(R.id.current_ip);
         current_port=findViewById(R.id.current_port);
-        current_ip.setText("Current IP is: "+LOCAL_IP);
-        current_port.setText("Current Port is: "+LOCAL_PORT);
         save=findViewById(R.id.save);
+
+        if(MODE.equals("local"))
+            localMode();
+        else
+            globalMode();
+
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +58,7 @@ public class SettingActivity extends AppCompatActivity {
                         GLOBAL_PORT=port.getText().toString();
                     }
                 }
+                MainActivity.client.close();
                 startActivity(new Intent(SettingActivity.this, MainActivity.class));
             }
         });
@@ -60,23 +67,29 @@ public class SettingActivity extends AppCompatActivity {
 
     public void setMode(View v){
         if(v==local){
-            MODE="local";
-
-            ip.setHint("Local IP Address");
-            port.setHint("Local Port Number");
-            current_ip.setText("Current IP is: "+LOCAL_IP);
-            current_port.setText("Current Port is: "+LOCAL_PORT);
-            local.setText("Local IP \uf058");
-            global.setText("Public IP \uf111");
+            localMode();
         }
         else {
-            MODE="global";
-            ip.setHint("Public IP Address");
-            port.setHint("Public Port Number");
-            current_ip.setText("Current IP is: "+GLOBAL_IP);
-            current_port.setText("Current Port is: "+GLOBAL_PORT);
-            local.setText("Local IP \uf111");
-            global.setText("Public IP \uf058");
+            globalMode();
         }
+    }
+
+    public void localMode(){
+        MODE="local";
+        ip.setHint("Local IP Address");
+        port.setHint("Local Port Number");
+        current_ip.setText("Current IP is: "+LOCAL_IP);
+        current_port.setText("Current Port is: "+LOCAL_PORT);
+        local.setText("Local IP \uf058");
+        global.setText("Public IP \uf111");
+    }
+    public void globalMode(){
+        MODE="global";
+        ip.setHint("Public IP Address");
+        port.setHint("Public Port Number");
+        current_ip.setText("Current IP is: "+GLOBAL_IP);
+        current_port.setText("Current Port is: "+GLOBAL_PORT);
+        local.setText("Local IP \uf111");
+        global.setText("Public IP \uf058");
     }
 }

@@ -6,15 +6,12 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationManagerCompat;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     NotificationHandler notificationHandler;
     NotificationManagerCompat notificationManager;
 
-    MqttAndroidClient client;
+    static MqttAndroidClient client;
 
     Snackbar disconnected;
     Snackbar retry;
@@ -94,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, SettingActivity.class));
                 else
                     showDialog();
-
                 return false;
             }
         });
@@ -172,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void doConnect() {
+        retry.show();
         final String clientId = MqttClient.generateClientId();
         client = new MqttAndroidClient(getApplicationContext(), "tcp://"+ip+":"+port, clientId);
         client.setCallback(new MqttCallbackExtended() {
@@ -299,6 +296,15 @@ public class MainActivity extends AppCompatActivity {
         hChart=findViewById(R.id.humidity);
         tChart=findViewById(R.id.temp);
 
+        retry=Snackbar.make(layout, "Disconnected! Trying To Connect...", Snackbar.LENGTH_INDEFINITE);
+        disconnected=Snackbar.make(layout, "Can't Connect To Server", Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doConnect();
+            }
+        });
+
+        activateControls(false);
 
         temperatureChartInit(tChart);
         humidityChartInit(hChart);
@@ -320,13 +326,6 @@ public class MainActivity extends AppCompatActivity {
 
         notificationHandler=new NotificationHandler(getSystemService(NotificationManager.class));
         notificationManager = NotificationManagerCompat.from(this);
-        retry=Snackbar.make(layout, "Disconnected! Trying To Reconnect...", Snackbar.LENGTH_INDEFINITE);
-        disconnected=Snackbar.make(layout, "Can't Connect To Server", Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doConnect();
-            }
-        });
     }
 
     public void activateControls(boolean flag){
