@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -91,8 +92,8 @@ public class ViewHandler {
 
         while(iterator.hasNext()){
             DataSnapshot point=iterator.next();
-            Integer x = Integer.parseInt(point.child("temperature").getValue().toString());
-            Integer y = Integer.parseInt(point.child("humidity").getValue().toString());
+            Float x = Float.parseFloat(point.child("temperature").getValue().toString());
+            Float y = Float.parseFloat(point.child("humidity").getValue().toString());
             tPointValues.add(new PointValue(i++, x));
             hPointvalues.add(new PointValue(j++, y));
         }
@@ -117,7 +118,7 @@ public class ViewHandler {
         data.setLines(lines);
         chartView.setLineChartData(data);
 
-        info.setText("Last 24 hours...");
+        info.setText("Last "+snapshot.getChildrenCount()+" Values...");
     }
 
     public static void renderDHT(String response, SlimChart tChart, SlimChart hChart) {
