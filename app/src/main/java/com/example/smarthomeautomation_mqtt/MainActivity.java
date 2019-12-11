@@ -1,6 +1,7 @@
 package com.example.smarthomeautomation_mqtt;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -10,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     Switch motorsw;
 
     TextView info;
+    TextView up_info;
 
     LineChartView lineChartView;
     SlimChart hChart;
@@ -287,6 +290,20 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dht = database.getReference("dht");
+        DatabaseReference time= database.getReference("time");
+
+        time.addValueEventListener(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                setUpdateInfo(dataSnapshot, up_info);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         dht.addValueEventListener(new ValueEventListener() {
             @Override
@@ -324,6 +341,7 @@ public class MainActivity extends AppCompatActivity {
         hChart=findViewById(R.id.humidity);
         tChart=findViewById(R.id.temp);
         info=findViewById(R.id.chart_Info);
+        up_info=findViewById(R.id.up_info);
 
         retry=Snackbar.make(layout, "Disconnected! Trying To Connect...", Snackbar.LENGTH_INDEFINITE);
         disconnected=Snackbar.make(layout, "Can't Connect To Server", Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {

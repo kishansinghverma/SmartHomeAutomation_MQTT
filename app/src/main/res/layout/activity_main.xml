@@ -9,14 +9,15 @@
 
     <TableRow
         android:id="@+id/headTable"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="24dp"
         android:layout_marginRight="20dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:layout_width="280dp"
@@ -30,7 +31,7 @@
             style="?android:attr/actionOverflowButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="showPopup"/>
+            android:onClick="showPopup" />
 
     </TableRow>
 
@@ -38,7 +39,7 @@
         android:id="@+id/cardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="35dp"
         app:cardCornerRadius="5dp"
         app:cardElevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -93,8 +94,8 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/awesome_bold"
                         android:paddingRight="8dp"
-                        android:textSize="13dp"
-                        android:text="\uf2c8"/>
+                        android:text="\uf2c8"
+                        android:textSize="13dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -110,12 +111,12 @@
                     android:layout_gravity="center">
 
                     <TextView
-                        android:fontFamily="@font/awesome_bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/awesome_bold"
                         android:paddingRight="8dp"
-                        android:textSize="13dp"
-                        android:text="\uf043"/>
+                        android:text="\uf043"
+                        android:textSize="13dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -367,5 +368,15 @@
 
         </androidx.cardview.widget.CardView>
     </TableRow>
+
+    <TextView
+        android:id="@+id/up_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/awesome_regular"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headTable" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

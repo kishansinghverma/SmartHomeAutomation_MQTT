@@ -1,12 +1,20 @@
 package com.example.smarthomeautomation_mqtt;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
+import androidx.annotation.RequiresApi;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -80,9 +88,10 @@ public class ViewHandler {
 
     }
 
-    public static void setLineChartData(LineChartView chartView, DataSnapshot snapshot, TextView info ){
+    public static void setLineChartData(LineChartView chartView, DataSnapshot snapshot, TextView info){
 
         int i=0; int j=0;
+
 
         List<PointValue> tPointValues=new ArrayList<>();
         List<PointValue> hPointvalues=new ArrayList<>();
@@ -119,6 +128,7 @@ public class ViewHandler {
         chartView.setLineChartData(data);
 
         info.setText("Last "+snapshot.getChildrenCount()+" Values...");
+
     }
 
     public static void renderDHT(String response, SlimChart tChart, SlimChart hChart) {
@@ -135,5 +145,14 @@ public class ViewHandler {
             sw.setChecked(true);
         else
             sw.setChecked(false);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void setUpdateInfo(DataSnapshot snapshot, TextView up_info){
+        Instant instant = Instant.ofEpochMilli(Long.parseLong(snapshot.getValue().toString())*1000);
+        Date date = Date.from(instant);
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss dd/M/yyyy");
+        String[] datetime=formatter.format(date).split(" ");
+        up_info.setText("Last Updated At: \uf017 "+datetime[0]+" \uf073 "+datetime[1]);
     }
 }
