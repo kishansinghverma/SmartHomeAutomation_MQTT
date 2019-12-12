@@ -153,6 +153,6 @@ public class ViewHandler {
         Date date = Date.from(instant);
         SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss dd/M/yyyy");
         String[] datetime=formatter.format(date).split(" ");
-        up_info.setText("Last Updated At: \uf017 "+datetime[0]+" \uf073 "+datetime[1]);
+        up_info.setText("Last Seen: \uf017 "+datetime[0]+" \uf073 "+datetime[1]);
     }
 }
