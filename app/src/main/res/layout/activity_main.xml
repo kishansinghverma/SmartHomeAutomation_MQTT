@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="50dp"
         android:layout_marginRight="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -23,360 +23,492 @@
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/amiko"
-            android:text="Smart Home\nAutomation"
+            android:text="Smart Switch"
             android:textColor="#000000"
             android:textSize="34sp" />
 
-        <ImageButton
-            style="?android:attr/actionOverflowButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="showPopup" />
+        <Space
+            android:layout_width="40dp"/>
+
+
+        <ImageView
+            app:srcCompat="@drawable/refresh"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:onClick="refreshData"/>
 
     </TableRow>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="10dp"
+        android:layout_marginTop="100dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headTable">
 
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/dualbulbcard"
+                android:layout_width="@dimen/cardWidth"
+                android:layout_height="@dimen/cardHeight"
+                android:layout_marginLeft="@dimen/cardMargin"
+                android:layout_marginTop="@dimen/cardMargin"
+                android:layout_marginRight="@dimen/cardMargin"
+                android:layout_marginBottom="@dimen/cardMargin"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="viewHandler"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp">
 
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingTop="10dp"
-                android:paddingRight="10dp">
-
-                <com.example.smarthomeautomation_mqtt.SlimChart
-                    android:id="@+id/temp"
-                    android:layout_width="130dp"
-                    android:layout_height="130dp"
-                    android:layout_margin="10dp"
-                    app:roundedEdges="true"
-                    app:strokeWidth="15dp"
-                    app:text="15.0C"
-                    app:textColor="@color/colorPrimaryDark" />
-
-                <com.example.smarthomeautomation_mqtt.SlimChart
-                    android:id="@+id/humidity"
-                    android:layout_width="130dp"
-                    android:layout_height="130dp"
-                    android:layout_margin="10dp"
-                    android:layout_marginBottom="0dp"
-                    app:roundedEdges="true"
-                    app:strokeWidth="15dp"
-                    app:text="16%"
-                    app:textColor="@color/colorAccent" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp">
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/awesome_bold"
-                        android:paddingRight="8dp"
-                        android:text="\uf2c8"
-                        android:textSize="13dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Temperature"
-                        android:textSize="12dp" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/awesome_bold"
-                        android:paddingRight="8dp"
-                        android:text="\uf043"
-                        android:textSize="13dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Humidity"
-                        android:textSize="12dp" />
-
-                </TableRow>
-
-            </TableRow>
-        </TableLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/chartCard"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginLeft="21dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="21dp"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/gradient"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/chart_Info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:layout_marginRight="20dp"
-                android:gravity="right"
-                android:text="Last 24 Hours..."
-                android:textColor="#000000" />
-
-            <lecho.lib.hellocharts.view.LineChartView
-                android:id="@+id/chart"
-                android:layout_width="match_parent"
-                android:layout_height="110dp" />
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/awesome_bold"
-                    android:paddingRight="8dp"
-                    android:textSize="13dp"
-                    android:textColor="#ffffff"
-                    android:text="\uf2c8"/>
-
-                <TextView
-
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Temperature"
-                    android:textColor="#ffffff" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/awesome_bold"
-                    android:paddingRight="8dp"
-                    android:textColor="#000000"
-                    android:layout_marginLeft="50dp"
-                    android:textSize="13dp"
-                    android:text="\uf043"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Humidity"
-                    android:textColor="#000000" />
-            </TableRow>
-
-        </LinearLayout>
-
-
-    </androidx.cardview.widget.CardView>
-
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chartCard">
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/bulbcard"
-            android:layout_width="100dp"
-            android:layout_height="130dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:onClick="payloadCreator"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardCornerRadius="5dp"
-            app:cardElevation="3dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    app:srcCompat="@drawable/light_neon" />
-
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_horizontal"
-                    android:text="Light Bulb"
-                    android:textSize="12dp" />
-
-                <TableRow
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal">
+                    android:orientation="vertical">
 
-                    <Switch
-                        android:id="@+id/bulbsw"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="@dimen/imageWidth"
+                        android:layout_height="@dimen/imageHeight"
+                        app:srcCompat="@drawable/light_neon" />
+
+                    <TextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:onClick="switchHandler" />
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="Dual Bulb"
+                        android:textSize="@dimen/divTextSize" />
 
-                </TableRow>
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spaceSize" />
 
-            </LinearLayout>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
 
-        </androidx.cardview.widget.CardView>
+                        <Switch
+                            android:id="@+id/dualbulbswitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:onClick="viewHandler" />
+                    </TableRow>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/fancard"
+                android:layout_width="@dimen/cardWidth"
+                android:layout_height="@dimen/cardHeight"
+                android:layout_marginLeft="@dimen/cardMargin"
+                android:layout_marginTop="@dimen/cardMargin"
+                android:layout_marginRight="@dimen/cardMargin"
+                android:layout_marginBottom="@dimen/cardMargin"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="viewHandler"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/fancard"
-            android:layout_width="100dp"
-            android:layout_height="130dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:onClick="payloadCreator"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardCornerRadius="5dp"
-            app:cardElevation="3dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    app:srcCompat="@drawable/fan_neon" />
-
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_horizontal"
-                    android:text="Ceiling Fan"
-                    android:textSize="12dp" />
-
-                <TableRow
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal">
+                    android:orientation="vertical">
 
-                    <Switch
-                        android:id="@+id/fansw"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="@dimen/imageWidth"
+                        android:layout_height="@dimen/imageHeight"
+                        app:srcCompat="@drawable/fan_neon" />
+
+                    <TextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:onClick="switchHandler" />
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="Ceiling Fan"
+                        android:textSize="@dimen/divTextSize" />
 
-                </TableRow>
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spaceSize" />
 
-            </LinearLayout>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
 
+                        <Switch
+                            android:id="@+id/fanswitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:onClick="viewHandler" />
+                    </TableRow>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/mainsocketcard"
+                android:layout_width="@dimen/cardWidth"
+                android:layout_height="@dimen/cardHeight"
+                android:layout_marginLeft="@dimen/cardMargin"
+                android:layout_marginTop="@dimen/cardMargin"
+                android:layout_marginRight="@dimen/cardMargin"
+                android:layout_marginBottom="@dimen/cardMargin"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="viewHandler"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp">
 
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/motorcard"
-            android:layout_width="100dp"
-            android:layout_height="130dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:onClick="payloadCreator"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardCornerRadius="5dp"
-            app:cardElevation="3dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    app:srcCompat="@drawable/pump_neon" />
-
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_horizontal"
-                    android:text="Water Pump"
-                    android:textSize="12dp" />
-
-                <TableRow
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal">
+                    android:orientation="vertical">
 
-                    <Switch
-                        android:id="@+id/motorsw"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="@dimen/imageWidth"
+                        android:layout_height="@dimen/imageHeight"
+                        app:srcCompat="@drawable/socket" />
+
+                    <TextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:onClick="switchHandler" />
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="Main Socket"
+                        android:textSize="@dimen/divTextSize" />
 
-                </TableRow>
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spaceSize" />
 
-            </LinearLayout>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
 
+                        <Switch
+                            android:id="@+id/mainsocketswitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:onClick="viewHandler" />
+                    </TableRow>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cflcard"
+                android:layout_width="@dimen/cardWidth"
+                android:layout_height="@dimen/cardHeight"
+                android:layout_marginLeft="@dimen/cardMargin"
+                android:layout_marginTop="@dimen/cardMargin"
+                android:layout_marginRight="@dimen/cardMargin"
+                android:layout_marginBottom="@dimen/cardMargin"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="viewHandler"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp">
 
-        </androidx.cardview.widget.CardView>
-    </TableRow>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/up_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/awesome_regular"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headTable" />
+                    <ImageView
+                        android:layout_width="@dimen/imageWidth"
+                        android:layout_height="@dimen/imageHeight"
+                        app:srcCompat="@drawable/light_neon" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="CFL Light"
+                        android:textSize="@dimen/divTextSize" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spaceSize" />
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
+
+                        <Switch
+                            android:id="@+id/cflswitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:onClick="viewHandler" />
+                    </TableRow>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/singlebulbcard"
+                android:layout_width="@dimen/cardWidth"
+                android:layout_height="@dimen/cardHeight"
+                android:layout_marginLeft="@dimen/cardMargin"
+                android:layout_marginTop="@dimen/cardMargin"
+                android:layout_marginRight="@dimen/cardMargin"
+                android:layout_marginBottom="@dimen/cardMargin"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="viewHandler"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/imageWidth"
+                        android:layout_height="@dimen/imageHeight"
+                        app:srcCompat="@drawable/light_neon" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="Single Bulb"
+                        android:textSize="@dimen/divTextSize" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spaceSize" />
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
+
+                        <Switch
+                            android:id="@+id/singlebulbswitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:onClick="viewHandler" />
+                    </TableRow>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/heavysocketcard"
+                android:layout_width="@dimen/cardWidth"
+                android:layout_height="@dimen/cardHeight"
+                android:layout_marginLeft="@dimen/cardMargin"
+                android:layout_marginTop="@dimen/cardMargin"
+                android:layout_marginRight="@dimen/cardMargin"
+                android:layout_marginBottom="@dimen/cardMargin"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="viewHandler"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/imageWidth"
+                        android:layout_height="@dimen/imageHeight"
+                        app:srcCompat="@drawable/socket" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="Heavy Socket"
+                        android:textSize="@dimen/divTextSize" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spaceSize" />
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
+
+                        <Switch
+                            android:id="@+id/heavysocketswitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:onClick="viewHandler" />
+                    </TableRow>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/lightsocketcard"
+                android:layout_width="@dimen/cardWidth"
+                android:layout_height="@dimen/cardHeight"
+                android:layout_marginLeft="@dimen/cardMargin"
+                android:layout_marginTop="@dimen/cardMargin"
+                android:layout_marginRight="@dimen/cardMargin"
+                android:layout_marginBottom="@dimen/cardMargin"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="viewHandler"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/imageWidth"
+                        android:layout_height="@dimen/imageHeight"
+                        app:srcCompat="@drawable/socket" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="Light Socket"
+                        android:textSize="@dimen/divTextSize" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spaceSize" />
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
+
+                        <Switch
+                            android:id="@+id/lightsocketswitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:onClick="viewHandler" />
+                    </TableRow>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/wallbulbcard"
+                android:layout_width="@dimen/cardWidth"
+                android:layout_height="@dimen/cardHeight"
+                android:layout_marginLeft="@dimen/cardMargin"
+                android:layout_marginTop="@dimen/cardMargin"
+                android:layout_marginRight="@dimen/cardMargin"
+                android:layout_marginBottom="@dimen/cardMargin"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="viewHandler"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/imageWidth"
+                        android:layout_height="@dimen/imageHeight"
+                        app:srcCompat="@drawable/light_neon" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="Wall Bulb"
+                        android:textSize="@dimen/divTextSize" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spaceSize" />
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
+
+                        <Switch
+                            android:id="@+id/wallbulbswitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:onClick="viewHandler" />
+                    </TableRow>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/outerbulbcard"
+                android:layout_width="@dimen/cardWidth"
+                android:layout_height="@dimen/cardHeight"
+                android:layout_marginLeft="@dimen/cardMargin"
+                android:layout_marginTop="@dimen/cardMargin"
+                android:layout_marginRight="@dimen/cardMargin"
+                android:layout_marginBottom="@dimen/cardMargin"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="viewHandler"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/imageWidth"
+                        android:layout_height="@dimen/imageHeight"
+                        app:srcCompat="@drawable/light_neon" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="Outer Bulbs"
+                        android:textSize="@dimen/divTextSize" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spaceSize" />
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
+
+                        <Switch
+                            android:id="@+id/outerbulbswitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:onClick="viewHandler" />
+                    </TableRow>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </TableRow>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
