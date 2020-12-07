@@ -27,15 +27,6 @@
             android:textColor="#000000"
             android:textSize="34sp" />
 
-        <Space
-            android:layout_width="40dp"/>
-
-
-        <ImageView
-            app:srcCompat="@drawable/refresh"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:onClick="refreshData"/>
 
     </TableRow>
     <LinearLayout
