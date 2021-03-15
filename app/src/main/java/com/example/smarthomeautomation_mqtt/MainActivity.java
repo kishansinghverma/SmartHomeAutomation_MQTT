@@ -58,8 +58,9 @@ public class MainActivity extends AppCompatActivity {
         mqttManager=MqttManager.getInstance();
         mqttManager.setContext(getApplicationContext());
         mqttManager.initializeComponents();
-        mqttManager.registerCallbacks();
-        mqttManager.connect();
+        mqttManager.registerCallbacks(mqttManager.cloudClient);
+        mqttManager.registerCallbacks(mqttManager.localClient);
+        mqttManager.connectLocal();
     }
 
     public void viewHandler(View v){

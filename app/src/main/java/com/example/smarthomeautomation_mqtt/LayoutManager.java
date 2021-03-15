@@ -89,7 +89,7 @@ public class LayoutManager {
     }
 
     public void Toast(String message){
-        Toast.makeText(activity, message, Toast.LENGTH_SHORT);
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
     }
     public void showSnackbar(String message){
         snackbar.setText(message).show();
