@@ -151,6 +151,15 @@ public class MqttManager {
             public void connectionLost(Throwable cause) {
                 layoutManager.activateControls(false);
                 layoutManager.showSnackbar(cause.toString());
+
+                if (client == localClient) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            connectCloud();
+                        }
+                    }, 3000);
+                }
             }
 
             @Override
